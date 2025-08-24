@@ -1,10 +1,11 @@
-PackageSpec=parking-system-device-agent
+PackageSpec!=jq '.name' package.json
 
 dev:
 	mkdir -p dev
 
 init: dev
-	npm i -g ./lib/${PackageSpec}
+	npm i
+	npm i -g .
 	cd ./dev ; npx ${PackageSpec} init
 
 test: dev
