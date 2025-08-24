@@ -1,9 +1,12 @@
 {
   "name": "parking-system-device-agent",
   "version": "1.0.0",
-  "description": "> This is built on js firstly. If needed, Its could be replaced by another platform/languages.",
+  "description": "",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "parking-system-device-agent": "bin/cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/thanhntmany/parking-system-device-agent/issues"
   },
-  "homepage": "https://github.com/thanhntmany/parking-system-device-agent#readme"
+  "homepage": "https://github.com/thanhntmany/parking-system-device-agent#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
