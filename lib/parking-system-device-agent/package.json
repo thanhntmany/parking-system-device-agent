@@ -2,7 +2,7 @@
   "name": "parking-system-device-agent",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./app/index.js",
   "type": "module",
   "bin": {
     "parking-system-device-agent": "bin/cli.js"
@@ -22,5 +22,9 @@
   "homepage": "https://github.com/thanhntmany/parking-system-device-agent#readme",
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "exports": {
+    ".": "./app/index.js",
+    "./*": "./app/*"
   }
 }
