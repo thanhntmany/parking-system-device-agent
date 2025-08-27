@@ -1,0 +1,24 @@
+/* Customize */
+.bordered {
+    border-radius: .5rem;
+    border: solid 1px #9a9a9a;
+}
+
+/* Layout */
+.container {
+    position: relative;
+    display: block;
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+}
+
+.container>section {
+    padding: 2rem 1rem;
+    margin-bottom: 3rem;
+    background-color: #fff;
+}
+
+section>* {
+    margin-bottom: 1em;
+}

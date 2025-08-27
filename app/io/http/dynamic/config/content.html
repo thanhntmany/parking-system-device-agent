@@ -1,0 +1,329 @@
+<div class="container">
+    <br>
+    <h1>
+        <img src="/theme/default/logo.png" style="height: .8em;">
+        CONFIGURATION
+    </h1>
+    <br>
+</div>
+
+<div class="container">
+    <style>
+        .list-database {
+            position: relative;
+            display: block;
+        }
+
+        .list-database>* {
+            position: relative;
+            display: block;
+            height: 2em;
+            margin-bottom: 1em;
+            line-height: 1.5;
+            padding: .5em 1em;
+            border-radius: .25em;
+            background-color: beige;
+        }
+
+        .list-database>*:hover {
+            cursor: pointer;
+            background-color: rgb(206, 206, 179);
+        }
+
+        .list-database>*>*:nth-child(2) {
+            display: block;
+            width: fit-content;
+        }
+
+        .list-database>*>*:first-child {
+            display: block;
+            width: fit-content;
+            float: right;
+        }
+    </style>
+    <section class="bordered">
+        <h2>Databases:</h2>
+        <div class="list-database">
+            <div>
+                <div>
+                    <button>Select</button>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Select</button>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Select</button>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+        </div>
+        <div>
+            <button>Add Database</button>
+            <button>Set Masterpassword</button>
+        </div>
+        <script>
+            window.addEventListener("load", function () {
+                fetch(`/api/database`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    })
+            })
+        </script>
+    </section>
+
+</div>
+
+<div class="container">
+    <section class="bordered">
+        <h2>Device agents:</h2>
+        <div>
+            <button>Scan device agents in local network</button>
+        </div>
+        <div class="list-database">
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="container">
+    <section class="bordered">
+        <h2>Gates:</h2>
+        <div>
+            <button>Scan device agents in local network</button>
+        </div>
+        <div class="list-database">
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="container">
+    <section class="bordered">
+        <h2>Cameras:</h2>
+        <div>
+            <button>Scan device agents in local network</button>
+        </div>
+        <div class="list-database">
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="container">
+    <section class="bordered">
+        <h2>Barriers:</h2>
+        <div>
+            <button>Scan device agents in local network</button>
+        </div>
+        <div class="list-database">
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="container">
+    <section class="bordered">
+        <h2>Cards:</h2>
+        <div>
+            <button>Scan device agents in local network</button>
+        </div>
+        <div class="list-database">
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="container">
+    <section class="bordered">
+        <h2>Cards reader:</h2>
+        <div>
+            <button>Scan device agents in local network</button>
+        </div>
+        <div class="list-database">
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+            <div>
+                <div>
+                    <button>Test connection</button>
+                    <button>Backup</button>
+                    <button>Duplicate</button>
+                    <button>Remove</button>
+                </div>
+                <div>maindb</div>
+            </div>
+        </div>
+    </section>
+</div>

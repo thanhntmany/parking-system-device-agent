@@ -2,6 +2,7 @@
 import App from 'parking-system-device-agent'
 const app = new App()
 
+
 const args = process.argv.slice(2)
 while (args.length) {
     var token = args.shift()
@@ -35,15 +36,20 @@ while (args.length) {
         }
     } else switch (token) {
         case 'init':
-            app.config.saveTofile()
+            await app.init()
             break;
 
         case 'start':
-            app.bootstrap()
-            app.start()
+            await app.start()
+            break;
+
+        case 'run':
+            const ctx = app.newContext() // #TODO: auth feature
+            console.log(await app.run(ctx, ...args))
             break;
 
         default:
+            // #TODO: show usage
             break;
     }
 }

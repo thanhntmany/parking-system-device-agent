@@ -1,0 +1,118 @@
+<script src="/ws.js"></script>
+<script>
+    app.current = {
+        id: location.pathname.split("/").pop()
+    }
+
+    window.addEventListener("load", function () {
+        fetch(`/api/gate/${app.current.id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            })
+    })
+
+</script>
+
+<div style="width: 100%;">
+    <div style="display: block; width: 100%;">
+        <h3>Làn 1 - <span>Hướng: Ra</span></h3>
+        <table style="width: 100%;">
+            <tbody>
+                <tr>
+                    <td>Camera</td>
+                    <td>
+                        <div>Số thẻ: 0123456789</div>
+                        <div>Biển số đăng ký: 00A - 56789</div>
+                    </td>
+                    <td>
+                        <div>Số thẻ: 0123456789</div>
+                        <div>Biển số đăng ký: 00A - 56789</div>
+                    </td>
+                    <td>Camera</td>
+                </tr>
+                <tr>
+                    <td>Vào</td>
+                    <td>
+                        <div>Ngày giờ: 2025-12-31 23:59</div>
+                    </td>
+                    <td>
+                        <div>Ngày giờ: 2025-12-31 23:59</div>
+                    </td>
+                    <td>Ra</td>
+                </tr>
+                <tr>
+                    <td style="width: 400px;">
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <div style="display: block;position: absolute;z-index: 1;">
+                                <button id="play-btn" style="display: block;">play</button>
+                            </div>
+                            <video id="video-player" src="http://0.0.0.0:8001/mp4" autoplay muted controls
+                                   style="width: auto;height: auto;max-width: 100%;max-height: 100%;">
+                            </video>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <img style="width: 100%;height: 100%;object-fit: contain;" src="/sample/gate/car-moving-in.jpg">
+                        </div>
+                    </td>
+                    <td>
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <img style="width: 100%;height: 100%;object-fit: contain;" src="/sample/gate/car-moving-in.jpg">
+                        </div>
+                    </td>
+                    <td style="width: 400px;">
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <div style="display: block;position: absolute;z-index: 1;">
+                                <button id="play-btn" style="display: block;">play</button>
+                            </div>
+                            <video id="video-player" src="http://0.0.0.0:8001/mp4" autoplay muted controls
+                                   style="width: auto;height: auto;max-width: 100%;max-height: 100%;">
+                            </video>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ra</td>
+                    <td>
+                        <div>Ngày giờ: 2025-12-31 23:59</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <video id="video-player" src="http://0.0.0.0:8001/video" autoplay muted controls
+                                   style="width: auto;height: auto;max-width: 100%;max-height: 100%;">
+                        </div>
+                    </td>
+                    <td>
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <img style="width: 100%;height: 100%;object-fit: contain;" src="/sample/gate/car-moving-out.jpg">
+                        </div>
+                    </td>
+                    <td>
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <img style="width: 100%;height: 100%;object-fit: contain;" src="/sample/gate/car-moving-out.jpg">
+                        </div>
+                    </td>
+                    <td>
+                        <div style="width: 100%;height: 24em;border: solid 1px;background: #000;">
+                            <video id="video-player" src="http://0.0.0.0:8001/video" autoplay muted controls
+                                   style="width: auto;height: auto;max-width: 100%;max-height: 100%;">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>

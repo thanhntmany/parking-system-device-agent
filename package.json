@@ -1,11 +1,11 @@
 {
   "name": "parking-system-device-agent",
   "version": "1.0.0",
-  "description": "",
-  "main": "./app/index.js",
+  "description": "- http   ref: https://github.com/websockets/ws/blob/master/examples/express-session-parse/index.js",
   "type": "module",
+  "main": "./app/index.js",
   "bin": {
-    "parking-system-device-agent": "bin/cli.js"
+    "parking-system-device-agent": "app/io/cli/index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,10 +21,14 @@
   },
   "homepage": "https://github.com/thanhntmany/parking-system-device-agent#readme",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "ws": "^8.18.3"
   },
   "exports": {
     ".": "./app/index.js",
     "./*": "./app/*"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.9"
   }
 }

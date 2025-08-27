@@ -1,0 +1,53 @@
+<body>
+    <div style="width: 50%;height: 100%;font-size: 1.25rem;">
+        <div style="margin: auto;padding: 4em 5em 8em 5em;width: fit-content;height: fit-content;top: 50%;position: relative;transform: translateY(-50%);border-radius: 4px;background-color: #ffffffe8;box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;">
+            <h1>
+                <img src="/theme/default/logo.png" style="height: .8em;">
+                PARKING SYSTEM
+            </h1>
+            <br>
+            <h2>Welcome</h2>
+
+            <div></div>
+            <script>{
+                    fetch('/api/host')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log(data);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        })
+                }</script>
+
+            <form>
+                <div style="padding: .5em 0;">
+                    <b>Username</b><br>
+                    <input name="username" placeholder="User Name" type="text" autocomplete="username" style="font-size: 1em; width: 100%;">
+                </div>
+                <div style="padding: .5em 0;">
+                    <b>Password</b><br>
+                    <input name="password" placeholder="Password" type="password" autocomplete="password" style="font-size: 1em; width: 100%;">
+                </div>
+                <div style="padding: .5em 0;">
+                    <button style="padding: 0 3em;margin: auto;">
+                        <h3 style="margin-top: .5em; margin-bottom: .5em;">Login</h3>
+                    </button>
+                </div>
+            </form>
+            <hr>
+
+            <div style="margin-top: 3em;">
+                <a href="/desk/">
+                    <h2>➤ Desk page</h2>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</body>

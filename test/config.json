@@ -1,3 +1,10 @@
 {
-  "cwd": "/home/thanhntmany/lab/io-packing/parking-system-device-agent/dev"
+  "port": 3000,
+  "database": {
+    "list": {
+      "1": {},
+      "maindb": {},
+      "subdb": {}
+    }
+  }
 }

@@ -1,0 +1,22 @@
+import express from 'express'
+import page from './page.js'
+
+const router = express.Router()
+
+router.use("/:id", (req, res, next) => {
+    console.log(req.url)
+    console.log("id:", req.params.id)
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+    res.send(page.render())
+})
+
+router.use(/^\//, (req, res, next) => {
+    if (req.path !== "/" || (req.method !== 'GET' && req.method !== 'HEAD')) return next()
+
+    console.log(req.url)
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+    res.send(page.render())
+})
+
+export default router
+
