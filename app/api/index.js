@@ -47,7 +47,9 @@ class AppApi {
 
         // #TODO:
         // current latency is proximate 3 seconds (video: I-Frame Interval: 10)
-        // rebuilt project in pure C to achieve real-time speed
+        // to achieve real-time speed:
+        // - use faster protocol: udp based (websocket)
+        // - rebuilt project in pure C
         app.get('/mp4', (req, res) => {
             res.contentType('video/mp4');
 
@@ -56,7 +58,7 @@ class AppApi {
 
             // NOTE: set Audio Encoding to AAC first
             const ffmpegArgs = [
-                '-i', `rtsp://admin:qaz@1a@3@192.168.0.100:554/Streaming/Channels/101`,
+                '-i', `rtsp://admin:qaz@1a@3@192.168.0.101:554/Streaming/Channels/101`,
                 '-movflags', 'frag_keyframe',
                 '-c', 'copy',
                 '-f', 'mp4',

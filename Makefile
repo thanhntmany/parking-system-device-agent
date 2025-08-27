@@ -1,12 +1,11 @@
 PackageSpec!=jq '.name' package.json
 
-dev:
-	mkdir -p dev
+test:
+	mkdir -p test
 
-init: dev
+init: test
 	npm i
-	npm i -g .
-	cd ./dev ; npx ${PackageSpec} init
+	cd ./test ; npx ../. init
 
-test: dev
-	cd ./dev ; npx ${PackageSpec} start
+dev: test
+	cd ./test ; npx ../ start
