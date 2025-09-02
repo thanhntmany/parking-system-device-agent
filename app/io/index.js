@@ -5,17 +5,19 @@ import ws from './ws/index.js'
 export class AppIo {
     constructor(app) {
         this.app = app
+        this.ws = ws(this.app)
+        this.http = http(this.app)
+        this.udp = udp(this.app, 8069)
     }
 
     bootstrap() {
-        this.http = http(this.app)
-        this.ws = ws(this.app)
-        this.udp = udp(this.app)
+        this.udp.bootstrap()
     }
 
     start() {
         this.bootstrap()
-        // this.udp.start(8069)
+
+        this.udp.start()
         // this.ws.start(8081)
         this.http.start(8001)
     }

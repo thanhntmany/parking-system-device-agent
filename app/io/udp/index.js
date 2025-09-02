@@ -2,33 +2,48 @@ import dgram from 'node:dgram'
 
 
 export class AppUdp {
-    constructor(app, port = 8067) {
+    constructor(app, port) {
         this.app = app
         this.port = port
     }
 
     bootstrap() {
-        const socket = this.socket = dgram.createSocket('udp4');
+        const socket = this.socket = dgram.createSocket('udp4')
+        const _this = this
+
         socket.on('listening', function () {
-            const address = socket.address();
-            console.log('[udp] listening ' + address.address + ":" + address.port);
-        });
+            const address = socket.address()
+            console.log('[udp] listening ' + address.address + ":" + address.port)
+        })
 
+        socket.on('error', e => {
+            this.app.logger.error('[udp-error]', e)
+        })
+
+        socket.on('message', function (message, remote) {
+            console.log(`[udp] ${remote.address}:${remote.port} ->:`, String(message))
+
+            if (remote.port == 9070) {
+                _this.send("Hellow Server!", remote.port, remote.address)
+            }
+            if (remote.port == 9069) {
+                _this.send("Hellow UNI!", remote.port, remote.address)
+            }
+        })
     }
 
-    start(port = 8067) {
-        this.bootstrap()
-        this.socket.bind(port);
+    start() {
+        this.socket.bind(this.port)
     }
 
-    sendBroadcast(buff) {
-        this.socket.setBroadcast(true);
-        this.socket.send(buff, 0, buff.length, 5555, '255.255.255.255');
+    sendBuff(buff, port, host, callback) {
+        this.socket.send(buff, 0, buff.length, port, host, callback);
     }
 
-    sendMsgBroadcast(msg) {
-        this.socket.send(Buffer.from(msg))
+    send(msg, port, host, callback) {
+        console.log(`[udp] ${host}:${port}   <-:`, msg)
+        this.sendBuff(Buffer.from(msg), port, host, callback)
     }
 }
 
-export default app => new AppUdp(app)
+export default (app, port = 8069) => new AppUdp(app, port)
