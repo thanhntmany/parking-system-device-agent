@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import path from 'node:path'
 import { spawn } from 'node:child_process'
 
@@ -40,7 +41,7 @@ export default app => {
 
     });
 
-    router.get('/video/:id/frame', async (req, res) => {
+    router.get('/video/:id/capture', async (req, res) => {
         res.set('Content-Type', 'image/jpeg');
         const ffmpegArgs = [
             '-i', path.join(app.config.cwd, 'sample', `sample${req.params.id}.mp4`),
@@ -81,11 +82,11 @@ export default app => {
         const uuid = ++uuidCount
 
         // capture image
-        // ffmpeg -i rtsp://admin:qaz@1a@3@192.168.0.100:554/Streaming/Channels/101 -ss 00:00:01 -vframes 1 output.jpg
+        // ffmpeg -i rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101 -ss 00:00:01 -vframes 1 output.jpg
 
         // NOTE: set Audio Encoding to AAC first
         const ffmpegArgs = [
-            '-i', `rtsp://admin:qaz@1a@3@192.168.0.100:554/Streaming/Channels/101`,
+            '-i', `rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101`,
             '-fflags', 'nobuffer',
             // '-flags2', 'fast',
             // '-preset', 'ultrafast',
@@ -115,10 +116,14 @@ export default app => {
 
     });
 
-    router.get('/camera/:id/frame', async (req, res) => {
+    router.get('/camera/:id/streamurl', async (req, res) => {
+        return res.send(`rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101`)
+    });
+
+    router.get('/camera/:id/capture', cors(), async (req, res) => {
         res.set('Content-Type', 'image/jpeg');
         const ffmpegArgs = [
-            '-i', `rtsp://admin:qaz@1a@3@192.168.0.100:554/Streaming/Channels/101`,
+            '-i', `rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101`,
             '-fflags', 'nobuffer',
             '-vframes', '1',
             '-vcodec', 'mjpeg',
