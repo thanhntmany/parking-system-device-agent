@@ -81,16 +81,21 @@ export default app => {
         res.contentType('video/mp4');
         const uuid = ++uuidCount
 
-        // capture image
-        // ffmpeg -i rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101 -ss 00:00:01 -vframes 1 output.jpg
+        const camera = await fetch(`http://localhost:9080/api/camera/${req.params.id}/detail-all`)
+            .then(async response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+        const { result, error } = camera
+        if (error) return res.json({ error: error })
+        const url = `${result.scheme}//${result.username}:${result.password}@${result.adress || "localhost"}:${result.port}/${result.pathname}`
 
         // NOTE: set Audio Encoding to AAC first
         const ffmpegArgs = [
-            '-i', `rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101`,
+            '-i', url,
             '-fflags', 'nobuffer',
-            // '-flags2', 'fast',
-            // '-preset', 'ultrafast',
-            // '-tune', 'zerolatency',
             '-movflags', 'frag_keyframe',
             '-c', 'copy',
             '-f', 'mp4',
@@ -116,14 +121,21 @@ export default app => {
 
     });
 
-    router.get('/camera/:id/streamurl', async (req, res) => {
-        return res.send(`rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101`)
-    });
-
     router.get('/camera/:id/capture', cors(), async (req, res) => {
+        const camera = await fetch(`http://localhost:9080/api/camera/${req.params.id}/detail-all`)
+            .then(async response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+        const { result, error } = camera
+        if (error) return res.json({ error: error })
+        const url = `${result.scheme}//${result.username}:${result.password}@${result.adress || "localhost"}:${result.port}/${result.pathname}`
+
         res.set('Content-Type', 'image/jpeg');
         const ffmpegArgs = [
-            '-i', `rtsp://admin:qaz@1a@3@192.168.0.102:554/Streaming/Channels/101`,
+            '-i', url,
             '-fflags', 'nobuffer',
             '-vframes', '1',
             '-vcodec', 'mjpeg',
