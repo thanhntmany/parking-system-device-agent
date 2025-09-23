@@ -1,10 +1,10 @@
 import dgram from 'dgram'
 import { UdpMsgBuff } from 'parking-system-common'
-const { payloadFromBuff } = UdpMsgBuff
+const { payloadFromBuff, OPERATIONS_ARRAY } = UdpMsgBuff
 
 const udpBase = {
     send(buff, port, address, callback) {
-        console.log(`[udp] ${address}:${port} <=`, buff)
+        console.log(`[udp] ${address}:${port} <= buff`, buff.length)
         return this.socket.send(buff, 0, buff.length, port, address, callback);
     },
 
@@ -13,17 +13,15 @@ const udpBase = {
     },
 
     sendPayload(opValue, payload, port, host, callback) {
+        console.log(`[udp] ${host}:${port} <=`, OPERATIONS_ARRAY[opValue].code, ":", payload)
         return this.send(UdpMsgBuff.buffFromPayload(opValue, payload), port, host, callback)
     },
 }
 
 export default async (app, model) => {
     const handleMsg = (msg, rinfo) => {
-        console.log(`[udp] ${rinfo.address}:${rinfo.port} =>`)
-        console.log(`   > msg:`, msg)
-
         const data = payloadFromBuff(msg)
-        console.log(`   >data:`, data)
+        console.log(`[udp] ${rinfo.address}:${rinfo.port} =>`, OPERATIONS_ARRAY[data.opValue].code, ":", data)
         model.emit(data.opValue, data.payload, rinfo)
     }
 
