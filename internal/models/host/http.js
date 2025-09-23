@@ -8,7 +8,7 @@ export default async (app, model) => {
         host: {
             http: {
                 type: 'IPv4',
-                port: 8080,
+                port: 7080,
                 host: '0.0.0.0'
             }
         }

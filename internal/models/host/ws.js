@@ -6,7 +6,7 @@ export default async app => {
     Config.merge({
         host: {
             ws: {
-                port: 9081
+                port: 7081
             }
         }
     })
