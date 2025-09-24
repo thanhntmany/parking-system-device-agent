@@ -33,7 +33,6 @@ export default async (app, model) => {
         return true
     }
     Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
-        console.log(`[event I_AM_CENTER] ${rinfo.address}:${rinfo.port} =>:`, payload)
         updateCenter(null, {
             uuid: payload.uuid,
             address: rinfo.address,

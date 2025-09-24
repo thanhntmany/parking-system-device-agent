@@ -14,7 +14,7 @@ const udpBase = {
     },
 
     sendPayload(opValue, payload, port, host, callback) {
-        console.log(`[udp] ${host}:${port} <=`, OPERATIONS_ARRAY[opValue].code, ":", payload)
+        console.log(`[udp] ${host}:${port} <=`, OPERATIONS_ARRAY[opValue].code, payload)
         return this.send(UdpMsgBuff.buffFromPayload(opValue, payload), port, host, callback)
     },
 }
@@ -62,9 +62,9 @@ export default async (app, model) => {
                 for (const address of broadcastAddresses) {
                     socket.send(buff, 0, buff.length, port, address, (err) => {
                         if (err) {
-                            console.error(`[udp/brd] Error sending to ${address}:`, err);
+                            console.error(`[udp/brd] Error => ${address}:`, err);
                         } else {
-                            console.log(`[udp/brd] Message sent to ${address}:${port}`);
+                            console.log(`[udp/brd] => ${address}:${port}`);
                         }
                     })
                 }
