@@ -1,4 +1,5 @@
 import dgram from 'dgram'
+import os from 'os'
 import { UdpMsgBuff } from 'parking-system-common'
 const { payloadFromBuff, OPERATIONS_ARRAY } = UdpMsgBuff
 
@@ -27,7 +28,7 @@ export default async (app, model) => {
 
     const broadcast = Object.create(udpBase)
     {
-        const socket = broadcast.socket = dgram.createSocket('udp4')
+        const socket = dgram.createSocket('udp4')
         socket.on('listening', function () {
             socket.setBroadcast(true)
             const address = socket.address()
@@ -37,6 +38,43 @@ export default async (app, model) => {
             app.logger.error('[udp/brd-error]', e);
         })
         socket.on('message', handleMsg);
+        socket.bind(() => {
+            socket.setBroadcast(true);
+        })
+
+        Object.assign(broadcast, {
+            socket,
+            send(buff, port, address, callback) {
+                const interfaces = os.networkInterfaces();
+                let broadcastAddresses = [];
+
+                for (const interfaceName in interfaces) {
+                    for (const iface of interfaces[interfaceName]) {
+                        if (iface.family === 'IPv4') {
+                            const ipParts = iface.address.split('.').map(Number);
+                            const netmaskParts = iface.netmask.split('.').map(Number);
+                            const broadcastParts = ipParts.map((ip, i) => ip | (~netmaskParts[i] & 255));
+                            broadcastAddresses.push(broadcastParts.join('.'));
+                        }
+                    }
+                }
+
+                for (const address of broadcastAddresses) {
+                    socket.send(buff, 0, buff.length, port, address, (err) => {
+                        if (err) {
+                            console.error(`[udp/brd] Error sending to ${address}:`, err);
+                        } else {
+                            console.log(`[udp/brd] Message sent to ${address}:${port}`);
+                        }
+                    })
+                }
+            },
+            sendPayload(opValue, payload, port, host, callback) {
+                console.log(`[udp/brd] :${port} <=`, OPERATIONS_ARRAY[opValue].code, ":", payload)
+                return this.send(UdpMsgBuff.buffFromPayload(opValue, payload), port, host, callback)
+            },
+        })
+
     }
 
     const unicast = Object.create(udpBase)
