@@ -23,32 +23,6 @@ export default async (app, model) => {
         return true
     }
 
-    Config.once('onLoadDone', () => sendFindCenter(null))
-    const sendFindCenter = model.sendFindCenter = async (ctx, uuid = Config.data.center.selectedUuid, port = 9070, address = '0.0.0.0') => {
-        Udp.broadcast.sendPayload(
-            UdpMsgBuff.OPERATIONS.DISCOVER_CENTER,
-            { uuid },
-            port, address
-        )
-        return true
-    }
-    Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
-        updateCenter(null, {
-            uuid: payload.uuid,
-            address: rinfo.address,
-            http: {
-                port: payload.httpPort,
-            }
-        })
-        sendIAmDeviceAgent(
-            null,
-            {
-                uuid: Config.data.uuid,
-                name: Config.data.name,
-                httpPort: Host.http.server.address().port
-            },
-            rinfo.port, rinfo.address)
-    })
     const updateCenter = model.updateCenter = async (ctx, center) => {
         const _center = { ...center }, { uuid } = _center
         delete _center.selectedUuid
@@ -67,7 +41,6 @@ export default async (app, model) => {
 
         return true
     }
-
     const sendIAmDeviceAgent = model.sendIAmDeviceAgent = (ctx, payload, ...args) => {
         return Udp.unicast.sendPayload(
             UdpMsgBuff.OPERATIONS.I_AM_DEVICE_AGENT,
@@ -75,7 +48,33 @@ export default async (app, model) => {
             ...args
         )
     }
+    Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
+        updateCenter(null, {
+            uuid: payload.uuid,
+            address: rinfo.address,
+            http: {
+                port: payload.httpPort,
+            }
+        })
+        sendIAmDeviceAgent(
+            null,
+            {
+                uuid: Config.data.uuid,
+                name: Config.data.name,
+                httpPort: Host.http.server.address().port
+            },
+            rinfo.port, rinfo.address)
+    })
 
+    const sendFindCenter = model.sendFindCenter = async (ctx, uuid = Config.data.center.selectedUuid, port = 9070, address = '0.0.0.0') => {
+        Udp.broadcast.sendPayload(
+            UdpMsgBuff.OPERATIONS.DISCOVER_CENTER,
+            { uuid },
+            port, address
+        )
+        return true
+    }
+    Config.once('onLoadDone', () => sendFindCenter(null))
 
     async function checkHttpConnection(url) {
         try {
