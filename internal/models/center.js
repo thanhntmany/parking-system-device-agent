@@ -23,6 +23,21 @@ export default async (app, model) => {
         return true
     }
 
+    const sendIAmDeviceAgent = model.sendIAmDeviceAgent = async (ctx, port = 9070, address = '0.0.0.0') => {
+        const { data } = Config
+        Udp.unicast.sendPayload(
+            UdpMsgBuff.OPERATIONS.I_AM_DEVICE_AGENT,
+            {
+                uuid: data.uuid,
+                name: data.name,
+                http: data.host.http
+
+            },
+            port, address
+        )
+        return true
+    }
+
     const selectAndupdateCenter = model.selectAndupdateCenter = async (ctx, center) => {
         const _center = { ...center }, { uuid } = _center
         delete _center.selectedUuid
@@ -50,6 +65,7 @@ export default async (app, model) => {
                 port: payload.httpPort,
             }
         })
+        sendIAmDeviceAgent(null, undefined, rinfo.address)
     })
 
     const sendFindCenter = model.sendFindCenter = async (ctx, uuid = Config.data.center.selectedUuid, port = 9070, address = '0.0.0.0') => {
@@ -69,10 +85,9 @@ export default async (app, model) => {
         const timeoutId = setTimeout(() => controller.abort(), timeout);
 
         try {
-            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors', signal });
-            console.log(`[center.checkHttpConnection] Successfully link to ${url}. Status: ${response.status}`);
-            clearTimeout(timeoutId)
-            return response.ok;
+            await fetch(url, { method: 'HEAD', mode: 'no-cors', signal })
+            console.log(`[center.checkHttpConnection] Successfully link to ${url}.`);
+            return true;
         } catch (error) {
             console.error(`[center.checkHttpConnection] Network or Fetch Error: ${error.message}`);
             clearTimeout(timeoutId)
