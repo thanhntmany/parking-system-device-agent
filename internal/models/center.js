@@ -23,47 +23,33 @@ export default async (app, model) => {
         return true
     }
 
-    const updateCenter = model.updateCenter = async (ctx, center) => {
+    const selectAndupdateCenter = model.selectAndupdateCenter = async (ctx, center) => {
         const _center = { ...center }, { uuid } = _center
         delete _center.selectedUuid
 
         const newConf = {
             center: {
+                selectedUuid: uuid,
                 centers: {
                     [uuid]: _center
                 }
             },
         }
-        if (!Config.data.center.selectedUuid || !Config.data.center.centers[Config.data.center.selectedUuid]) newConf.center.selectedUuid = uuid
         await Config.merge(ctx, newConf).save()
 
         if (newConf.center.selectedUuid) model.emit('change-selectedUuid', center)
 
         return true
     }
-    const sendIAmDeviceAgent = model.sendIAmDeviceAgent = (ctx, payload, ...args) => {
-        return Udp.unicast.sendPayload(
-            UdpMsgBuff.OPERATIONS.I_AM_DEVICE_AGENT,
-            payload,
-            ...args
-        )
-    }
     Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
-        updateCenter(null, {
+        if (!Config.data.center.selectedUuid || !Config.data.center.centers[Config.data.center.selectedUuid]) selectAndupdateCenter(null, {
             uuid: payload.uuid,
+            name: payload.name,
             address: rinfo.address,
             http: {
                 port: payload.httpPort,
             }
         })
-        sendIAmDeviceAgent(
-            null,
-            {
-                uuid: Config.data.uuid,
-                name: Config.data.name,
-                httpPort: Host.http.server.address().port
-            },
-            rinfo.port, rinfo.address)
     })
 
     const sendFindCenter = model.sendFindCenter = async (ctx, uuid = Config.data.center.selectedUuid, port = 9070, address = '0.0.0.0') => {
@@ -76,26 +62,29 @@ export default async (app, model) => {
     }
     Config.once('onLoadDone', () => sendFindCenter(null))
 
-    async function checkHttpConnection(url) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                console.error(`HTTP Error: ${response.status} - ${response.statusText}`)
-                return false
-            }
+    async function checkHttpConnection(url, timeout = 5000) {
+        console.log("[center.checkHttpConnection] url", url);
+        const controller = new AbortController()
+        const { signal } = controller
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-            console.log(`Successfully connected to ${url}. Status: ${response.status}`);
-            return true;
+        try {
+            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors', signal });
+            console.log(`[center.checkHttpConnection] Successfully link to ${url}. Status: ${response.status}`);
+            clearTimeout(timeoutId)
+            return response.ok;
         } catch (error) {
-            console.error(`Network or Fetch Error: ${error.message}`);
+            console.error(`[center.checkHttpConnection] Network or Fetch Error: ${error.message}`);
+            clearTimeout(timeoutId)
             return false;
         }
     }
 
+
     {
         var count = 0
         var looping = false
-        const loopTryConnect = model.loopTryConnect = async (ctx, isStart, center) => {
+        const loopTryLink = model.loopTryLink = async (ctx, isStart, center) => {
             if (isStart && !looping) {
                 count = 0
                 looping = true
@@ -105,27 +94,27 @@ export default async (app, model) => {
             if (selectedUuid) {
                 const center = Config.data.center.centers[selectedUuid]
                 if (center) {
-                    console.warn("[center.loopTryConnect] Try no " + count + ": checkHttpConnection " + "http://" + center.address + ":" + center.http.port + "/api/ping");
+                    console.warn("[center.loopTryLink] Try no " + count + ": checkHttpConnection " + "http://" + center.address + ":" + center.http.port + "/api/ping");
                     if (await checkHttpConnection("http://" + center.address + ":" + center.http.port + "/api/ping")) {
                         count = 0
                         looping = false
-                        console.log("[center.loopTryConnect] Connected");
+                        console.log("[center.loopTryLink] linked");
                         return
                     }
                 }
                 else {
                     Config.data.center.selectedUuid = undefined
-                    console.warn("[center.loopTryConnect] Try no " + count + ": sendFindCenter")
+                    console.warn("[center.loopTryLink] Try no " + count + ": sendFindCenter")
                     sendFindCenter(ctx)
                 }
             }
             else {
-                console.warn("[center.loopTryConnect] Try no " + count + ": sendFindCenter")
+                console.warn("[center.loopTryLink] Try no " + count + ": sendFindCenter")
                 sendFindCenter(ctx)
             }
             if (count % 5 === 0) Config.data.center.selectedUuid = undefined
 
-            setTimeout(loopTryConnect, 1000, false, ctx);
+            setTimeout(loopTryLink, 1000, false, ctx);
         }
     }
 }
