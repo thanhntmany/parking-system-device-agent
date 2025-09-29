@@ -85,9 +85,9 @@ export default async (app, model) => {
         const timeoutId = setTimeout(() => controller.abort(), timeout);
 
         try {
-            await fetch(url, { method: 'HEAD', mode: 'no-cors', signal })
+            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors', signal })
             console.log(`[center.checkHttpConnection] Successfully link to ${url}.`);
-            return true;
+            return response.ok;
         } catch (error) {
             console.error(`[center.checkHttpConnection] Network or Fetch Error: ${error.message}`);
             clearTimeout(timeoutId)
@@ -109,8 +109,9 @@ export default async (app, model) => {
             if (selectedUuid) {
                 const center = Config.data.center.centers[selectedUuid]
                 if (center) {
-                    console.warn("[center.loopTryLink] Try no " + count + ": checkHttpConnection " + "http://" + center.address + ":" + center.http.port + "/api/ping");
-                    if (await checkHttpConnection("http://" + center.address + ":" + center.http.port + "/api/ping")) {
+                    const pingUrl = `http://${center.address}:${center.http.port}/api/ping/center`
+                    console.warn(`[center.loopTryLink] Try no ${count}: checkHttpConnection ${pingUrl}`);
+                    if (await checkHttpConnection(pingUrl)) {
                         count = 0
                         looping = false
                         console.log("[center.loopTryLink] linked");
