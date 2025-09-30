@@ -29,9 +29,7 @@ export default async (app, model) => {
             UdpMsgBuff.OPERATIONS.I_AM_DEVICE_AGENT,
             {
                 uuid: data.uuid,
-                name: data.name,
-                http: data.host.http
-
+                http: data.host.http,
             },
             port, address
         )

@@ -12,7 +12,6 @@ export default (app, model) => {
 
     const data = model.data = Object.create({
         cwd: process.cwd(),
-        name: "Device Agent",
     })
 
     const merge = model.merge = (ctx, obj) => {
