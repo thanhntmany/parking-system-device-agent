@@ -19,19 +19,6 @@ export default async (app, model) => {
         console.log("OOOOOOO  > msg", msg.data);
         console.log("OOOOOOO  > len", msg.data.length);
     })
-    Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
-        wsClient.connect(`ws://${rinfo.address}:${payload.ws.port}`)
-    })
-    wsClient.addEventListener("close", event => {
-        console.log('OOOOOOO [wsClient] Disconnected from WebSocket server');
-        model.loopTryLink()
-    })
-    wsClient.addEventListener("error", event => {
-        console.error('OOOOOOOOO [wsClient] WebSocket error:', event);
-        model.loopTryLink()
-    })
-
-
 
     const list = model.list = ctx => flattenObject(Config.data.centers)
     const get = model.get = (ctx, uuid) => model.list(ctx)[uuid || Config.data.center.selectedUuid]
@@ -115,44 +102,101 @@ export default async (app, model) => {
     {
         var count = 0
         var looping = false
-        const loopTryLink = model.loopTryLink = async (ctx, isStart, center) => {
-            if (isStart && !looping) {
-                count = 0
-                looping = true
-            }
-            ++count
-            const { selectedUuid } = Config.data.center
-            if (selectedUuid) {
-                const center = Config.data.center.centers[selectedUuid]
-                if (center) {
-                    const pingUrl = `http://${center.address}:${center.http.port}/api/ping/center`
-                    console.warn(`[center.loopTryLink] Try no ${count}: checkHttpConnection ${pingUrl}`);
-                    if (await checkHttpConnection(pingUrl)) {
-                        count = 0
-                        looping = false
-                        console.log("[center.loopTryLink] linked");
-                        return
+
+        var linkInterval = null
+        var loopTryLink = model.loopTryLink = async (ctx, isStart, center) => {
+            if (isStart) count = 0
+            if (!linkInterval) linkInterval = setInterval(async () => {
+                ++count
+                const { selectedUuid } = Config.data.center
+                if (selectedUuid) {
+                    const center = Config.data.center.centers[selectedUuid]
+                    if (center) {
+                        const pingUrl = `http://${center.address}:${center.http.port}/api/ping/center`
+                        console.warn(`[center.loopTryLink] Try no ${count}: checkHttpConnection ${pingUrl}`);
+                        if (await checkHttpConnection(pingUrl)) {
+                            count = 0
+                            clearInterval(linkInterval)
+                            console.log("[center.loopTryLink] linked");
+                            return
+                        }
+                    }
+                    else {
+                        Config.data.center.selectedUuid = undefined
+                        console.warn("[center.loopTryLink] Try no " + count + ": sendFindCenter")
+                        sendFindCenter(ctx)
                     }
                 }
                 else {
-                    Config.data.center.selectedUuid = undefined
                     console.warn("[center.loopTryLink] Try no " + count + ": sendFindCenter")
                     sendFindCenter(ctx)
                 }
-            }
-            else {
-                console.warn("[center.loopTryLink] Try no " + count + ": sendFindCenter")
-                sendFindCenter(ctx)
-            }
-            if (count % 5 === 0) Config.data.center.selectedUuid = undefined
-
-            setTimeout(loopTryLink, 1000, false, ctx);
+                if (count % 5 === 0) Config.data.center.selectedUuid = undefined
+            }, 2000)
         }
+
+
+        // const loopTryLink1 = model.loopTryLink1 = async (ctx, isStart, center) => {
+        //     if (isStart && !looping) {
+        //         count = 0
+        //     }
+        //     ++count
+        //     const { selectedUuid } = Config.data.center
+        //     if (selectedUuid) {
+        //         const center = Config.data.center.centers[selectedUuid]
+        //         if (center) {
+        //             const pingUrl = `http://${center.address}:${center.http.port}/api/ping/center`
+        //             console.warn(`[center.loopTryLink] Try no ${count}: checkHttpConnection ${pingUrl}`);
+        //             if (await checkHttpConnection(pingUrl)) {
+        //                 count = 0
+        //                 looping = false
+        //                 console.log("[center.loopTryLink] linked");
+        //                 return
+        //             }
+        //         }
+        //         else {
+        //             Config.data.center.selectedUuid = undefined
+        //             console.warn("[center.loopTryLink] Try no " + count + ": sendFindCenter")
+        //             sendFindCenter(ctx)
+        //         }
+        //     }
+        //     else {
+        //         console.warn("[center.loopTryLink] Try no " + count + ": sendFindCenter")
+        //         sendFindCenter(ctx)
+        //     }
+        //     if (count % 5 === 0) Config.data.center.selectedUuid = undefined
+
+        //     setTimeout(loopTryLink, 1000, false, ctx);
+        // }
+
+        var interval = null
+        const loopReconnect = () => {
+            if (interval) return
+            interval = setInterval(function () {
+                console.log("[wsClient] loopReconnect");
+                if (wsClient?.socket?.readyState === WebSocket.OPEN) {
+                    clearInterval(interval)
+                    interval = null
+                } else {
+                    sendFindCenter(null)
+                }
+            }, 3000);
+        }
+
+        Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
+            wsClient.connect(`ws://${rinfo.address}:${payload.ws.port}`)
+        })
+        wsClient.addEventListener("close", event => {
+            console.log('OOOOOOO [wsClient] Disconnected from WebSocket server');
+            loopReconnect()
+        })
+        wsClient.addEventListener("error", event => {
+            console.error('OOOOOOOOO [wsClient] WebSocket error:', event);
+            loopReconnect()
+        })
+
+
+        Config.once('onLoadDone', loopReconnect)
     }
-
-
-    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXX", wsClient);
-    // wsClient.connect()
-    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXX", wsClient);
 
 }
