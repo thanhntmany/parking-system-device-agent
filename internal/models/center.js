@@ -20,14 +20,15 @@ export default async (app, model) => {
         console.log("OOOOOOO  > len", msg.data.length);
     })
     Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
-        wsClient.forceConnect(`ws://${rinfo.address}:${payload.ws.port}`)
+        wsClient.connect(`ws://${rinfo.address}:${payload.ws.port}`)
     })
-    wsClient.socket.addEventListener("close", event => {
+    wsClient.addEventListener("close", event => {
         console.log('OOOOOOO [wsClient] Disconnected from WebSocket server');
+        model.loopTryLink()
     })
-
-    wsClient.socket.addEventListener("error", event => {
+    wsClient.addEventListener("error", event => {
         console.error('OOOOOOOOO [wsClient] WebSocket error:', event);
+        model.loopTryLink()
     })
 
 
@@ -77,9 +78,8 @@ export default async (app, model) => {
             uuid: payload.uuid,
             name: payload.name,
             address: rinfo.address,
-            http: {
-                port: payload.http.port,
-            }
+            http: payload.http,
+            ws: payload.ws,
         })
         sendIAmDeviceAgent(null, undefined, rinfo.address)
     })

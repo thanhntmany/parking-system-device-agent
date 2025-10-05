@@ -1,5 +1,6 @@
-export class WebSocketClientHandler {
+export class WebSocketClientHandler extends EventTarget {
     constructor(url, msgHandler) {
+        super()
         this.tryReconnect = true
         this.url = url
         this.msgHandler = msgHandler
@@ -7,41 +8,15 @@ export class WebSocketClientHandler {
 
     connect(url) {
         if (url) this.url = url
-        console.log('[wsClient] Connect:', this.url);
+        console.log('[wsClient] Try connect:', this.url);
 
         if (this.socket) this.socket.close()
-
         const socket = this.socket = new WebSocket(this.url)
-        socket.addEventListener("open", () => {
-            console.log('[wsClient] Connected to WebSocket server:',);
-            // Send a message to the server upon connection
-            socket.send('Hello from deviceagent!');
-        })
-
-        socket.onmessage = (event) => {
-            console.log('Message from server:', event.data);
-        };
-        socket.addEventListener("message", (event) => {
-            console.log('Message from server:', event.data);
-            this.msgHandler(event)
-        })
-
-        socket.addEventListener("close", event => {
-            console.log('[wsClient] Disconnected from WebSocket server');
-            // this.triggerTryReconnect()
-        })
-
-        socket.addEventListener("error", event => {
-            console.error('[wsClient] WebSocket error:', event);
-            // this.triggerTryReconnect()
-        })
-
+        socket.addEventListener("open", e => this.dispatchEvent(new CustomEvent("open", { detail: e })))
+        socket.addEventListener("message", e => this.dispatchEvent(new CustomEvent("message", { detail: e })))
+        socket.addEventListener("close", e => this.dispatchEvent(new CustomEvent("close", { detail: e })))
+        socket.addEventListener("error", e => this.dispatchEvent(new CustomEvent("error", { detail: e })))
         return socket
-    }
-
-    forceConnect(url) {
-        this.closeSocket()
-        this.connect(url)
     }
 
     closeSocket() {
