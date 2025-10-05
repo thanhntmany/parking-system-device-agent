@@ -4,4 +4,12 @@ export default async (app, model) => {
 
     const Config = await app.import('config')
     Config.once('onLoadDone', () => Center.loopTryLink(null))
+
+    // const ws = await app.import('host/wsClient')
+    // ws.connect()
+
+
+    // model.ws = await app.import('host/ws')
 }
+    // const ws = await app.import('host/wsClient')
+    // ws.connect()

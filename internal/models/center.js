@@ -14,6 +14,24 @@ export default async (app, model) => {
     const Udp = model.udp = await app.import('host/udp')
     const Host = await app.import('host')
 
+    const WsClient = await app.import('host/wsClient')
+    const wsClient = model.wsClient = WsClient.new("", msg => {
+        console.log("OOOOOOO  > msg", msg.data);
+        console.log("OOOOOOO  > len", msg.data.length);
+    })
+    Udp.on(OPERATIONS.I_AM_CENTER, (payload, rinfo) => {
+        wsClient.forceConnect(`ws://${rinfo.address}:${payload.ws.port}`)
+    })
+    wsClient.socket.addEventListener("close", event => {
+        console.log('OOOOOOO [wsClient] Disconnected from WebSocket server');
+    })
+
+    wsClient.socket.addEventListener("error", event => {
+        console.error('OOOOOOOOO [wsClient] WebSocket error:', event);
+    })
+
+
+
     const list = model.list = ctx => flattenObject(Config.data.centers)
     const get = model.get = (ctx, uuid) => model.list(ctx)[uuid || Config.data.center.selectedUuid]
     const set = model.set = async (ctx, opts) => {
@@ -60,7 +78,7 @@ export default async (app, model) => {
             name: payload.name,
             address: rinfo.address,
             http: {
-                port: payload.httpPort,
+                port: payload.http.port,
             }
         })
         sendIAmDeviceAgent(null, undefined, rinfo.address)
@@ -131,4 +149,10 @@ export default async (app, model) => {
             setTimeout(loopTryLink, 1000, false, ctx);
         }
     }
+
+
+    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXX", wsClient);
+    // wsClient.connect()
+    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXX", wsClient);
+
 }

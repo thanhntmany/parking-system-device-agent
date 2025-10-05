@@ -24,7 +24,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "parking-system-common": "file:../parking-system-common"
+    "parking-system-common": "file:../parking-system-common",
+    "ws": "^8.18.3"
   },
   "imports": {
     "#internal/*.js": "./internal/*.js"
